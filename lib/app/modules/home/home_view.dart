@@ -9,32 +9,13 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
-            _buildActionButtons(),
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    _buildWalletTabs(),
-                    Expanded(
-                      child: _buildCryptoList(),
-                    ),
-                    _buildBuySellSection(),
-                  ],
-                ),
-              ),
-            ),
+            _buildHeader(context),
+            _buildBalanceCard(context),
+            _buildActionButtons(context),
+            _buildCryptoList(),
           ],
         ),
       ),
@@ -42,85 +23,176 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(height: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Welcome back',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                  fontSize: 14,
+                ),
+              ),
+              const Text(
+                'John Doe',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () => Get.toNamed('/profile'),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Icon(
+                Icons.person,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBalanceCard(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Total Balance',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
           Obx(() => Text(
-                '\$${controller.totalBalance.value}',
+                '\$${controller.totalBalance.value.toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               )),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildBalanceAction(
+                context,
+                Icons.arrow_downward,
+                'Deposit',
+                () {},
+              ),
+              _buildBalanceAction(
+                context,
+                Icons.arrow_upward,
+                'Withdraw',
+                () {},
+              ),
+              _buildBalanceAction(
+                context,
+                Icons.swap_horiz,
+                'Swap',
+                () {},
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+  Widget _buildBalanceAction(
+    BuildContext context,
+    IconData icon,
+    String label,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
         children: [
-          _buildActionButton(Icons.arrow_downward, 'Receive'),
-          _buildActionButton(Icons.arrow_upward, 'Send'),
-          _buildActionButton(Icons.swap_horiz, 'Exchange'),
-          _buildActionButton(Icons.account_balance_wallet, 'Cash out'),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.blue[700],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWalletTabs() {
+  Widget _buildActionButtons(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
           const Text(
-            'My wallets',
+            'My Assets',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 18,
             ),
           ),
-          const SizedBox(width: 20),
-          Text(
-            'Empty wallets',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 16,
+          const Spacer(),
+          TextButton(
+            onPressed: () {},
+            child: Row(
+              children: [
+                Text(
+                  'See All',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ],
             ),
           ),
         ],
@@ -129,118 +201,56 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildCryptoList() {
-    return Obx(() => ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          itemCount: controller.cryptos.length,
-          itemBuilder: (context, index) {
-            return CryptoCard(crypto: controller.cryptos[index]);
-          },
-        ));
-  }
-
-  Widget _buildBuySellSection() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Buy Crypto'),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.blue),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Sell Crypto'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              const Text('From'),
-              const Spacer(),
-              const Text('To'),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Text('**** **** **** 6659', style: TextStyle(color: Colors.grey[600])),
-                      const Spacer(),
-                      const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Text('BTC', style: TextStyle(fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return Expanded(
+      child: Obx(() => ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: controller.cryptos.length,
+            itemBuilder: (context, index) {
+              return CryptoCard(crypto: controller.cryptos[index]);
+            },
+          )),
     );
   }
 
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: 0,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+    return NavigationBar(
+      selectedIndex: 0,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
+        NavigationDestination(
+          icon: Icon(Icons.bar_chart_outlined),
+          selectedIcon: Icon(Icons.bar_chart),
+          label: 'Market',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.history_outlined),
+          selectedIcon: Icon(Icons.history),
           label: 'History',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+        NavigationDestination(
+          icon: Icon(Icons.person_outline),
+          selectedIcon: Icon(Icons.person),
           label: 'Profile',
         ),
       ],
-      onTap: (index) {
-        if (index == 1) {
-          Get.toNamed('/history');
-        } else if (index == 2) {
-          Get.toNamed('/profile');
+      onDestinationSelected: (index) {
+        switch (index) {
+          case 0:
+            // Already on home
+            break;
+          case 1:
+            // Navigate to market (to be implemented)
+            break;
+          case 2:
+            Get.toNamed('/history');
+            break;
+          case 3:
+            Get.toNamed('/profile');
+            break;
         }
       },
     );

@@ -8,31 +8,48 @@ class CryptoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.black12),
-        ),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: crypto.symbol == 'BTC' 
-                ? Colors.orange 
-                : Colors.blue,
-            child: Text(
-              crypto.symbol,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            _buildCryptoLogo(),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    crypto.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    crypto.symbol,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(
+              width: 80,
+              height: 40,
+              child: CustomPaint(
+                painter: SimpleChartPainter(
+                  data: crypto.chartData,
+                  color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   '\$${crypto.value.toStringAsFixed(2)}',
@@ -42,36 +59,67 @@ class CryptoCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${crypto.amount}',
+                  '${crypto.percentChange >= 0 ? '+' : ''}${crypto.percentChange.toStringAsFixed(2)}%',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            width: 80,
-            height: 40,
-            child: CustomPaint(
-              painter: SimpleChartPainter(
-                data: crypto.chartData,
-                color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            '${crypto.percentChange >= 0 ? '+' : ''}${crypto.percentChange.toStringAsFixed(2)}%',
-            style: TextStyle(
-              color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _buildCryptoLogo() {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: _getLogoBackgroundColor(),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.asset(
+          'assets/images/crypto/${crypto.symbol.toLowerCase()}.png',
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback if image is not found
+            return Center(
+              child: Text(
+                crypto.symbol,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Color _getLogoBackgroundColor() {
+    switch (crypto.symbol) {
+      case 'BTC':
+        return const Color(0xFFF7931A);
+      case 'ETH':
+        return const Color(0xFF627EEA);
+      case 'PI':
+        return const Color(0xFFAA33FF);
+      case 'ADA':
+        return const Color(0xFF0033AD);
+      case 'SOL':
+        return const Color(0xFF00FFA3);
+      case 'DOGE':
+        return const Color(0xFFC3A634);
+      default:
+        return Colors.blue;
+    }
   }
 }
 
