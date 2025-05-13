@@ -18,7 +18,8 @@ A new Flutter project.
 
 ## Screenshots
 
-*Coming soon*
+![image](https://github.com/user-attachments/assets/c3be2630-1c28-4489-a029-688ddfd2789e)
+
 
 ## License
 
