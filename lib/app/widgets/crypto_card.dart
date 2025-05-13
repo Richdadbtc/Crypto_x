@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../data/models/crypto_model.dart';
 
 class CryptoCard extends StatelessWidget {
@@ -55,25 +54,10 @@ class CryptoCard extends StatelessWidget {
           SizedBox(
             width: 80,
             height: 40,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: List.generate(
-                      crypto.chartData.length,
-                      (index) => FlSpot(index.toDouble(), crypto.chartData[index]),
-                    ),
-                    isCurved: true,
-                    color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
-                    barWidth: 2,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
+            child: CustomPaint(
+              painter: SimpleChartPainter(
+                data: crypto.chartData,
+                color: crypto.percentChange >= 0 ? Colors.green : Colors.red,
               ),
             ),
           ),
@@ -89,4 +73,47 @@ class CryptoCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class SimpleChartPainter extends CustomPainter {
+  final List<double> data;
+  final Color color;
+
+  SimpleChartPainter({required this.data, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (data.isEmpty) return;
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+    
+    // Find min and max values for scaling
+    final double minValue = data.reduce((a, b) => a < b ? a : b);
+    final double maxValue = data.reduce((a, b) => a > b ? a : b);
+    final double range = maxValue - minValue;
+    
+    // Calculate step size for x-axis
+    final double stepX = size.width / (data.length - 1);
+    
+    // Start path at first point
+    path.moveTo(0, size.height - ((data[0] - minValue) / range) * size.height);
+    
+    // Add points to path
+    for (int i = 1; i < data.length; i++) {
+      final double x = stepX * i;
+      final double normalizedY = (data[i] - minValue) / range;
+      final double y = size.height - (normalizedY * size.height);
+      path.lineTo(x, y);
+    }
+    
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
