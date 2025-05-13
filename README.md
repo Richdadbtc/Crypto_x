@@ -1,21 +1,6 @@
-# Crypto_x
+# crypto_wallet
 
-A modern cryptocurrency wallet application built with Flutter and GetX.
-
-## Features
-
-- Track multiple cryptocurrencies
-- Real-time price updates
-- Custom chart visualization
-- Clean and intuitive UI
-- Cross-platform support (Android, iOS, Web)
-
-## Technology Stack
-
-- Flutter SDK
-- GetX for state management
-- Custom chart implementation
-- Intl package for formatting
+A new Flutter project.
 
 ## Getting Started
 
