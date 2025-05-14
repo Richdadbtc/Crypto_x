@@ -282,7 +282,11 @@ class ProfileView extends GetView<ProfileController> {
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
       title: Text(title),
-      trailing: trailing,
+      trailing: trailing ?? Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.red,
+        size: 16,
+      ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
     );

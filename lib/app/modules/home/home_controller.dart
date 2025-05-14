@@ -4,6 +4,7 @@ import '../../data/models/crypto_model.dart';
 class HomeController extends GetxController {
   final RxList<CryptoModel> cryptos = <CryptoModel>[].obs;
   final RxDouble totalBalance = 0.0.obs;
+  final RxBool isBalanceVisible = false.obs;
 
   @override
   void onInit() {
@@ -12,23 +13,35 @@ class HomeController extends GetxController {
     calculateTotalBalance();
   }
 
+  void toggleBalanceVisibility() {
+    isBalanceVisible.value = !isBalanceVisible.value;
+  }
+
   void loadCryptos() {
     cryptos.value = [
       CryptoModel(
         name: 'Bitcoin',
         symbol: 'BTC',
-        value: 42830.50,
+        value: 104151.0,
         amount: 0.235,
-        percentChange: 2.34,
-        chartData: [42100, 42300, 42500, 42200, 42600, 42830.50],
+        percentChange: 1.11,
+        chartData: [103000, 103500, 104000, 103800, 104100, 104151],
       ),
       CryptoModel(
         name: 'Ethereum',
         symbol: 'ETH',
-        value: 2286.70,
+        value: 2678.61,
         amount: 3.5,
-        percentChange: -1.25,
-        chartData: [2300, 2280, 2290, 2270, 2260, 2286.70],
+        percentChange: 7.32,
+        chartData: [2500, 2550, 2600, 2650, 2670, 2678.61],
+      ),
+      CryptoModel(
+        name: 'Solana',
+        symbol: 'SOL',
+        value: 184.554,
+        amount: 15.0,
+        percentChange: 5.97,
+        chartData: [175, 178, 180, 182, 183, 184.554],
       ),
       CryptoModel(
         name: 'Pi Network',
@@ -45,14 +58,6 @@ class HomeController extends GetxController {
         amount: 500.0,
         percentChange: 3.21,
         chartData: [0.55, 0.56, 0.57, 0.58, 0.57, 0.58],
-      ),
-      CryptoModel(
-        name: 'Solana',
-        symbol: 'SOL',
-        value: 145.20,
-        amount: 2.75,
-        percentChange: 8.45,
-        chartData: [135.0, 138.0, 140.0, 142.0, 144.0, 145.20],
       ),
       CryptoModel(
         name: 'Dogecoin',
